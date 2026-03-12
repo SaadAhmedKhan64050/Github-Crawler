@@ -60,12 +60,18 @@ jobs:
 
       - name: Setup postgres schema
         run: |
+          echo "Checking files"
+          ls -R
+
+          echo "Running schema.sql"
+
           PGPASSWORD="$POSTGRES_PASSWORD" psql \
+            -v ON_ERROR_STOP=1 \
             -h "$POSTGRES_HOST" \
             -p "$POSTGRES_PORT" \
             -U "$POSTGRES_USER" \
             -d "$POSTGRES_DB" \
-            -f app/infrastructure/db/schema.sql
+            -f ./app/infrastructure/db/schema.sql
 
       - name: Verify postgres schema
         run: |
@@ -74,8 +80,8 @@ jobs:
             -p "$POSTGRES_PORT" \
             -U "$POSTGRES_USER" \
             -d "$POSTGRES_DB" \
-            -c "\dn" \
-            -c "\dt github_crawler.*"
+            -c "SELECT schema_name FROM information_schema.schemata ORDER BY schema_name;" \
+            -c "SELECT table_schema, table_name FROM information_schema.tables ORDER BY table_schema, table_name;"
 
       - name: Crawl stars
         run: |
