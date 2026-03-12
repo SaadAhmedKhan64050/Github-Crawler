@@ -60,13 +60,13 @@ jobs:
 
       - name: Setup postgres schema
         run: |
-          echo "Checking files"
-          ls -R
+          echo "=== schema.sql contents ==="
+          cat ./app/infrastructure/db/schema.sql
 
-          echo "Running schema.sql"
-
+          echo "=== running schema.sql ==="
           PGPASSWORD="$POSTGRES_PASSWORD" psql \
             -v ON_ERROR_STOP=1 \
+            -a \
             -h "$POSTGRES_HOST" \
             -p "$POSTGRES_PORT" \
             -U "$POSTGRES_USER" \
